@@ -16,24 +16,13 @@ export async function POST(request: NextRequest) {
   try {
     const { items } = await request.json();
 
-    // Create order in database using email instead of id
-    const orderItems = items.map((item: any) => ({
-      productId: item.id,
-      quantity: item.quantity,
-      price: 0 // Will be updated with actual price
-    }));
-
+    // Create order in database (without items relation for now)
     const order = await prisma.order.create({
       data: {
         userEmail: session.user.email,
         total: 0, // Will be calculated
         status: 'pending',
-        items: {
-          create: orderItems
-        }
-      },
-      include: {
-        items: true
+        stripeSessionId: ''
       }
     });
 
