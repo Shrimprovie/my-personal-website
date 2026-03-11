@@ -1,11 +1,11 @@
 'use client';
 
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-let stripePromise: Promise<Stripe | null>;
+let stripePromise: any;
 
 const getStripe = () => {
   if (!stripePromise) {
