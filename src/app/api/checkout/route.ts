@@ -9,14 +9,14 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   
-  if (!session) {
+  if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const { items, customerEmail } = await request.json();
+    const { items } = await request.json();
 
-    // Create order in database
+    // Create order in database using email instead of id
     const orderItems = items.map((item: any) => ({
       productId: item.id,
       quantity: item.quantity,
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     const order = await prisma.order.create({
       data: {
-        userId: session.user?.id,
+        userEmail: session.user.email,
         total: 0, // Will be calculated
         status: 'pending',
         items: {
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       mode: 'payment',
       success_url: `${process.env.NEXTAUTH_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/shop`,
-      customer_email: customerEmail,
+      customer_email: session.user.email,
       metadata: {
         orderId: order.id
       }
