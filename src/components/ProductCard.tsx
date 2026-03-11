@@ -1,18 +1,9 @@
 'use client';
 
-import { loadStripe } from '@stripe/stripe-js';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-let stripePromise: any;
-
-const getStripe = () => {
-  if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-  }
-  return stripePromise;
-};
+import getStripe from '@/lib/stripe-client';
 
 export default function ProductCard({ product }: { product: any }) {
   const { data: session } = useSession();
