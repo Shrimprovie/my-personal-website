@@ -33,7 +33,8 @@ export default function ProductCard({ product }: { product: any }) {
       // Redirect to Stripe checkout
       const stripe = await getStripe();
       if (stripe) {
-        await stripe.redirectToCheckout({ sessionId });
+        // Use type assertion to force TypeScript to recognize the method
+        await (stripe as any).redirectToCheckout({ sessionId });
       }
     } catch (error) {
       console.error('Error:', error);
