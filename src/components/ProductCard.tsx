@@ -1,11 +1,18 @@
 'use client';
 
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+let stripePromise: Promise<Stripe | null>;
+
+const getStripe = () => {
+  if (!stripePromise) {
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  }
+  return stripePromise;
+};
 
 export default function ProductCard({ product }: { product: any }) {
   const { data: session } = useSession();
@@ -33,8 +40,10 @@ export default function ProductCard({ product }: { product: any }) {
       const { sessionId } = await response.json();
       
       // Redirect to Stripe checkout
-      const stripe = await stripePromise;
-      await stripe?.redirectToCheckout({ sessionId });
+      const stripe = await getStripe();
+      if (stripe) {
+        await stripe.redirectToCheckout({ sessionId });
+      }
     } catch (error) {
       console.error('Error:', error);
       alert('Something went wrong. Please try again.');
