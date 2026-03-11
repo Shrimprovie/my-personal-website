@@ -2,7 +2,7 @@
 
 import Navigation from '@/components/Navigation';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import ProductCard from '@/components/ProductCard';
 
 export default function Shop() {
   const { data: session } = useSession();
@@ -68,32 +68,12 @@ export default function Shop() {
               <option>Price: High to Low</option>
               <option>Newest</option>
             </select>
-          </ </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
-              <div className="aspect-square bg-gray-200 relative">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 right-3 bg-indigo-600 text-white text-xs font-medium px-2 py-1 rounded">
-                  {product.category}
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-indigo-600">${product.price}</span>
-                  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
 
